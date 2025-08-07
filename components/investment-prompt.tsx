@@ -7,12 +7,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import Link from "next/link";
 
-interface InvestmentPromptProps {
-  onProceed: () => void;
-}
-
-export default function InvestmentPrompt({ onProceed }: InvestmentPromptProps) {
+export default function InvestmentPrompt() {
   return (
     <div className="flex flex-col md:flex-row gap-6 w-full max-w-4xl mx-auto">
       {/* Card da imagem */}
@@ -45,9 +42,9 @@ export default function InvestmentPrompt({ onProceed }: InvestmentPromptProps) {
           </p>
         </CardContent>
         <CardFooter className="flex justify-center">
-          <Button onClick={onProceed} className="w-full">
-            Prosseguir para Investir
-          </Button>
+          <Link href="/investir">
+            <Button className="w-full">Prosseguir para Investir</Button>
+          </Link>
         </CardFooter>
       </Card>
     </div>

@@ -1,39 +1,62 @@
 import type { Metadata } from "next";
-import { GeistSans } from "geist/font/sans";
-import { GeistMono } from "geist/font/mono";
+import { Outfit } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/providers/theme-provider";
+import { ActiveThemeProvider } from "@/components/active-theme";
+import { cookies } from "next/headers";
+import { cn } from "@/lib/utils";
+import { Toaster } from "sonner";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Suspense } from "react";
+import Loading from "@/components/loading/loading";
+
+// Carrega a fonte Outfit
+const outfit = Outfit({
+  variable: "--font-outfit",
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "CMC Investe",
-  description: "Sistema Simulado de Investimento",
-  generator: "Lutero Chipenhe",
+  title: "Sirius Model",
+  description:
+    "Modelo para aplicações do Sector de Desenvolvimento de Sistemas Aplicacionais",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <style>{`
-html {
-  font-family: ${GeistSans.style.fontFamily};
-  --font-sans: ${GeistSans.variable};
-  --font-mono: ${GeistMono.variable};
-}
-        `}</style>
-      </head>
-      <body className="relative min-h-screen">
-        {/* Background Image Layer */}
-        <div
-          className="absolute inset-0 -z-10 opacity-50 bg-cover bg-center"
-          style={{ backgroundImage: "url('/bg.jpg')" }}
-        />
+  const cookieStore = await cookies();
+  const activeThemeValue = cookieStore.get("active_theme")?.value;
+  const isScaled = activeThemeValue?.endsWith("-scaled");
 
-        {/* Main content */}
-        {children}
+  return (
+    <html lang="en" suppressHydrationWarning className={outfit.variable}>
+      <head>
+        <link rel="icon" href="/favicon.ico" />
+      </head>
+      <body
+        className={cn(
+          "bg-background overscroll-none font-[var(--font-outfit)] antialiased",
+          activeThemeValue ? `theme-${activeThemeValue}` : "",
+          isScaled ? "theme-scaled" : ""
+        )}
+      >
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="outfit"
+          enableSystem
+          disableTransitionOnChange
+          enableColorScheme
+        >
+          <ActiveThemeProvider initialTheme={activeThemeValue}>
+            <Toaster position="top-center" />
+            <Suspense fallback={<Loading />}>{children}</Suspense>
+            <SpeedInsights />
+          </ActiveThemeProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

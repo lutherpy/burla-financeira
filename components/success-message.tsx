@@ -10,11 +10,7 @@ import {
 } from "@/components/ui/card";
 import Link from "next/link"; // Importe o componente Link
 
-interface SuccessMessageProps {
-  onGoBack: () => void;
-}
-
-export default function SuccessMessage({ onGoBack }: SuccessMessageProps) {
+export default function SuccessMessage() {
   return (
     <Card className="w-full max-w-md text-center">
       <CardHeader className="flex flex-col items-center gap-4">

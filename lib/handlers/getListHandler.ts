@@ -1,0 +1,71 @@
+import { db } from "@/db/drizzle";
+import { ilike, or, sql, asc, desc, SQL, Column } from "drizzle-orm";
+import { NextRequest, NextResponse } from "next/server";
+import type { PgTable } from "drizzle-orm/pg-core";
+
+/**
+ * Cria um handler GET reutilizável para listagem com busca, ordenação e paginação.
+ *
+ * @param table Tabela do Drizzle (ex: note)
+ * @param allowedOrderFields Campos permitidos para ordenação (chave: string, valor: coluna)
+ */
+export function getListHandler(
+  table: PgTable,
+  allowedOrderFields: Record<string, Column | SQL>
+) {
+  return async function GET(req: NextRequest) {
+    const { searchParams } = new URL(req.url);
+
+    const page = parseInt(searchParams.get("page") || "1", 10); // página atual, padrão 1
+    const limit = parseInt(searchParams.get("limit") || "10", 10); // limite de itens por página, padrão 5
+    const search = searchParams.get("search")?.trim() || "";
+    const orderBy = searchParams.get("orderBy") || "updatedAt";
+    const orderDir = searchParams.get("orderDir") || "desc";
+
+    const orderFieldRaw =
+      allowedOrderFields[orderBy] ?? Object.values(allowedOrderFields)[0];
+
+    // 🔽 Torna o order by case-insensitive (LOWER(coluna)) se possível
+    const orderField =
+      "name" in orderFieldRaw
+        ? sql`LOWER(${orderFieldRaw}::text)` // aplica cast explícito para texto
+        : orderFieldRaw;
+
+    const offset = (page - 1) * limit;
+
+    const searchConditions = Object.values(table).map((field) =>
+      ilike(sql`${field}::text`, `%${search}%`)
+    );
+
+    const whereClause = or(...searchConditions);
+
+    try {
+      const items = await db
+        .select()
+        .from(table)
+        .where(whereClause)
+        .orderBy(orderDir === "asc" ? asc(orderField) : desc(orderField))
+        .limit(limit)
+        .offset(offset);
+
+      const total = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(table)
+        .where(whereClause)
+        .then((rows) => Number(rows[0].count));
+
+      return NextResponse.json({
+        data: items,
+        total,
+        page,
+        limit,
+      });
+    } catch (error) {
+      console.error(error);
+      return NextResponse.json(
+        { error: "Erro ao buscar dados" },
+        { status: 500 }
+      );
+    }
+  };
+}

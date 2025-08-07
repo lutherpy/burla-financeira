@@ -57,7 +57,7 @@ const victimProfiles = [
   },
 ];
 
-export default function ScamVictimDashboard() {
+export default function InvestorDashboard() {
   return (
     <div className="w-full max-w-6xl mx-auto grid gap-6 p-4 md:p-6">
       <h1 className="text-2xl md:text-3xl font-bold mb-4">
