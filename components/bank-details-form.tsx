@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Copy } from "lucide-react";
+import { Copy, Ghost } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -132,8 +132,11 @@ export default function BankDetailsForm({ onSubmit }: BankDetailsFormProps) {
               </div>
             )}
           </div>
-          <Button type="submit" className="w-full">
-            Salvar Dados Bancários
+          <Button
+            type="submit"
+            className="w-full bg-green-600 hover:bg-green-700"
+          >
+            Salvar Dados Bancários e Prosseguir
           </Button>
         </form>
       </CardContent>
