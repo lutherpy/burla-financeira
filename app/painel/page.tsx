@@ -12,6 +12,8 @@ import {
 import { AlertTriangle, UserX, ShieldOff } from "lucide-react";
 import { DataTableServer } from "@/components/data-table-server";
 import { columns } from "@/components/tables/investment/columns";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 type Investment = {
   id: string;
@@ -42,15 +44,36 @@ export default function InvestorDashboard() {
     fetchData();
   }, []);
 
-  const totalVictims = investments.length;
+  const now_vitims = new Date();
+  const fiveDaysAgo = new Date(now_vitims.getTime() - 5 * 24 * 60 * 60 * 1000);
+
+  const totalVictims = investments.filter((i) => {
+    const createdAt = new Date(i.createdAt);
+    return createdAt >= fiveDaysAgo;
+  }).length;
+
   const totalLoss = investments.reduce((sum, i) => sum + Number(i.amount), 0);
-  const recentCases = investments.slice(-5).length;
+
+  const now = new Date();
+  const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  const recentCases = investments.filter((i) => {
+    const createdAt = new Date(i.createdAt);
+    return createdAt >= oneDayAgo;
+  }).length;
 
   return (
     <div className="w-full max-w-6xl mx-auto grid gap-6 p-4 md:p-6">
-      <h1 className="text-2xl md:text-3xl font-bold mb-4">
-        Dashboard de Burlas Financeiras
-      </h1>
+      {/* Título + Botão */}
+      <div className="flex flex-col gap-2 mb-4">
+        <h1 className="text-2xl md:text-3xl font-bold">
+          Dashboard de Burlas Financeiras
+        </h1>
+        <Link href="/investir">
+          <Button className="w-full sm:w-50" variant="default">
+            Simular
+          </Button>
+        </Link>
+      </div>
 
       {/* Resumo Geral */}
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
@@ -63,9 +86,7 @@ export default function InvestorDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalVictims}</div>
-            <p className="text-xs text-muted-foreground">
-              Desde Janeiro de 2025
-            </p>
+            <p className="text-xs text-muted-foreground">Nos últimos 5 dias</p>
           </CardContent>
         </Card>
 
@@ -84,7 +105,7 @@ export default function InvestorDashboard() {
               })}
             </div>
             <p className="text-xs text-muted-foreground">
-              Valores estimados pelas denúncias
+              Valor total dos investimentos
             </p>
           </CardContent>
         </Card>
@@ -98,9 +119,7 @@ export default function InvestorDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{recentCases}</div>
-            <p className="text-xs text-muted-foreground">
-              Nos últimos registos
-            </p>
+            <p className="text-xs text-muted-foreground">Nas últimas 24h</p>
           </CardContent>
         </Card>
       </div>

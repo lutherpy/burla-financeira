@@ -19,7 +19,7 @@ export function getListHandler(
     const page = parseInt(searchParams.get("page") || "1", 10); // página atual, padrão 1
     const limit = parseInt(searchParams.get("limit") || "10", 10); // limite de itens por página, padrão 5
     const search = searchParams.get("search")?.trim() || "";
-    const orderBy = searchParams.get("orderBy") || "updatedAt";
+    const orderBy = searchParams.get("orderBy") || "createdAt";
     const orderDir = searchParams.get("orderDir") || "desc";
 
     const orderFieldRaw =

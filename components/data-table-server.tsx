@@ -46,7 +46,7 @@ export function DataTableServer<TData, TValue>({
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-  const [orderBy, setOrderBy] = useState("updatedAt");
+  const [orderBy, setOrderBy] = useState("createdAt");
   const [orderDir, setOrderDir] = useState<"asc" | "desc">("desc");
 
   const { data, error, isLoading } = useSWR(

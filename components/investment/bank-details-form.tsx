@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Copy, Loader2 } from "lucide-react";
+import { Copy, Loader2, Save } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -282,6 +282,7 @@ export default function BankDetailsWizard() {
                         className="flex-1"
                       />
                       <Button
+                        className="bg-green-600 hover:bg-green-700"
                         type="button"
                         onClick={generatePaymentReference}
                         disabled={!!paymentReference}
@@ -329,14 +330,17 @@ export default function BankDetailsWizard() {
                   type="button"
                   onClick={handleNextStep}
                   disabled={isLoading}
-                  className="w-full md:w-auto bg-green-600 hover:bg-green-700"
+                  className="w-full md:w-auto"
                 >
                   {isLoading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : currentStep === 0 ? (
                     "Próximo"
                   ) : (
-                    "Salvar Dados e Finalizar"
+                    <>
+                      <Save className="h-4 w-4 mr-2" />
+                      Salvar os Dados e Finalizar
+                    </>
                   )}
                 </Button>
               </div>
