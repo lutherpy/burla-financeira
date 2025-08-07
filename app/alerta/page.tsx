@@ -1,7 +1,4 @@
-import InvestmentPrompt from "@/components/investment-prompt";
-import SuccessMessage from "@/components/success-message";
-
-import Image from "next/image";
+import SuccessMessage from "@/components/investment/success-message";
 
 export default function AlertaPage() {
   return (

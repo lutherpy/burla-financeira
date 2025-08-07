@@ -26,3 +26,6 @@ export const provincia = pgTable("provincia", {
   id: serial("id").primaryKey(),
   nome: text("nome").notNull(),
 });
+
+export type investmentSimulation = typeof investmentSimulation.$inferSelect;
+export type Provincia = typeof provincia.$inferSelect;

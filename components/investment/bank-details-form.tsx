@@ -51,17 +51,12 @@ const bankDetailsSchema = z.object({
 type BankDetailsFormData = z.infer<typeof bankDetailsSchema>;
 export type Provincia = typeof provincia.$inferSelect;
 
-interface BankDetailsFormProps {
-  onSubmit: (data: BankDetailsFormData) => void;
-}
-
-export default function BankDetailsWizard({ onSubmit }: BankDetailsFormProps) {
+export default function BankDetailsWizard() {
   const [isLoading, setIsLoading] = useState(false);
-  const [routingNumber, setRoutingNumber] = useState("");
+
   const [paymentReference, setPaymentReference] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(0); // 0 for Personal, 1 for Investment
 
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const form = useForm<BankDetailsFormData>({

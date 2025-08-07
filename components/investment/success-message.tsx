@@ -1,5 +1,4 @@
-import { AlertCircle, CheckCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { AlertCircle } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -8,7 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Link from "next/link"; // Importe o componente Link
 
 export default function SuccessMessage() {
   return (
@@ -17,7 +15,7 @@ export default function SuccessMessage() {
         <AlertCircle className="h-16 w-16 text-yellow-500" />
         <CardTitle className="text-3xl font-bold">ALERTA!</CardTitle>
         <CardDescription>
-          ESTA MENSAGEM É UMA SIMULAÇÃO DE GOLPE.
+          ESTE CENÁRIO É UMA SIMULAÇÃO DE GOLPE.
         </CardDescription>
       </CardHeader>
       <CardContent>

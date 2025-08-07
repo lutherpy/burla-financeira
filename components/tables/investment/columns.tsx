@@ -1,7 +1,8 @@
 // columns.ts
 import { ColumnDef } from "@tanstack/react-table";
+import { investmentSimulation } from "@/db/schema";
 
-export const columns: ColumnDef<any>[] = [
+export const columns: ColumnDef<investmentSimulation>[] = [
   {
     accessorKey: "name",
     header: "Nome",

@@ -8,15 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+
 import { AlertTriangle, UserX, ShieldOff } from "lucide-react";
 import { DataTableServer } from "@/components/data-table-server";
 import { columns } from "@/components/tables/investment/columns";
