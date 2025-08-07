@@ -16,7 +16,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, UserX, ShieldOff } from "lucide-react";
 
-// Dados fictícios
 const summary = {
   totalVictims: 238,
   totalLoss: 15473250.0,
@@ -58,36 +57,15 @@ const victimProfiles = [
   },
 ];
 
-const recentActions = [
-  {
-    id: 1,
-    type: "Alerta",
-    description: "Golpe com promessas de lucro rápido via Instagram",
-    date: "2025-08-05",
-  },
-  {
-    id: 2,
-    type: "Bloqueio",
-    description: "Encerramento de página falsa no Facebook",
-    date: "2025-08-04",
-  },
-  {
-    id: 3,
-    type: "Denúncia",
-    description: "Relato de burla com uso do nome de instituição bancária",
-    date: "2025-08-03",
-  },
-];
-
 export default function ScamVictimDashboard() {
   return (
     <div className="w-full max-w-6xl mx-auto grid gap-6 p-4 md:p-6">
-      <h1 className="text-3xl font-bold mb-4">
+      <h1 className="text-2xl md:text-3xl font-bold mb-4">
         Dashboard de Burlas Financeiras
       </h1>
 
       {/* Resumo Geral */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -102,6 +80,7 @@ export default function ScamVictimDashboard() {
             </p>
           </CardContent>
         </Card>
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -121,6 +100,7 @@ export default function ScamVictimDashboard() {
             </p>
           </CardContent>
         </Card>
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -143,7 +123,7 @@ export default function ScamVictimDashboard() {
             Perfil de vítimas e perdas financeiras.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -175,48 +155,6 @@ export default function ScamVictimDashboard() {
           </Table>
         </CardContent>
       </Card>
-
-      {/* Ações Recentes */}
-      {/* <Card>
-        <CardHeader>
-          <CardTitle>Ações Recentes de Prevenção</CardTitle>
-          <CardDescription>
-            Medidas tomadas para combater golpes.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Tipo</TableHead>
-                <TableHead>Descrição</TableHead>
-                <TableHead className="text-right">Data</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {recentActions.map((action) => (
-                <TableRow key={action.id}>
-                  <TableCell>
-                    <Badge
-                      variant={
-                        action.type === "Bloqueio"
-                          ? "default"
-                          : action.type === "Denúncia"
-                          ? "secondary"
-                          : "destructive"
-                      }
-                    >
-                      {action.type}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{action.description}</TableCell>
-                  <TableCell className="text-right">{action.date}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card> */}
     </div>
   );
 }
