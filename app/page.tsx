@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import InvestmentPrompt from '@/components/investment-prompt';
-import BankDetailsForm from '@/components/bank-details-form';
-import SuccessMessage from '@/components/success-message';
+import { useState } from "react";
+import InvestmentPrompt from "@/components/investment-prompt";
+import BankDetailsForm from "@/components/bank-details-form";
+import SuccessMessage from "@/components/success-message";
 
 export default function HomePage() {
   const [step, setStep] = useState(0); // 0: prompt, 1: form, 2: success
@@ -12,8 +12,12 @@ export default function HomePage() {
     setStep(1);
   };
 
-  const handleSubmitBankDetails = (data: { bankName: string; accountNumber: string; routingNumber: string }) => {
-    console.log('Dados bancários submetidos:', data);
+  const handleSubmitBankDetails = (data: {
+    bankName: string;
+    accountNumber: string;
+    routingNumber: string;
+  }) => {
+    console.log("Dados bancários submetidos:", data);
     // Aqui você faria a lógica para enviar os dados para o backend
     setStep(2);
   };

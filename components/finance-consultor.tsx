@@ -8,11 +8,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-interface InvestmentPromptProps {
+interface FinancePromptProps {
   onProceed: () => void;
 }
 
-export default function InvestmentPrompt({ onProceed }: InvestmentPromptProps) {
+export default function FinancePrompt({ onProceed }: FinancePromptProps) {
   return (
     <div className="flex flex-col md:flex-row gap-6 w-full max-w-4xl mx-auto">
       {/* Card da imagem */}
@@ -27,7 +27,7 @@ export default function InvestmentPrompt({ onProceed }: InvestmentPromptProps) {
       {/* Card do conteúdo */}
       <Card className="flex-1">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Pronto para Investir?</CardTitle>
+          <CardTitle className="text-2xl">Ola</CardTitle>
           <CardDescription>
             Olá! Sou analista da BODIVA e ofereço aqui uma chance exclusiva para
             investires com acesso privilegiado.

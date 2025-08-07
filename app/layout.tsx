@@ -25,7 +25,16 @@ html {
 }
         `}</style>
       </head>
-      <body>{children}</body>
+      <body className="relative min-h-screen">
+        {/* Background Image Layer */}
+        <div
+          className="absolute inset-0 -z-10 opacity-50 bg-cover bg-center"
+          style={{ backgroundImage: "url('/bg.jpg')" }}
+        />
+
+        {/* Main content */}
+        {children}
+      </body>
     </html>
   );
 }
