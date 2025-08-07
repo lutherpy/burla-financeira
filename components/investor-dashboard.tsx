@@ -1,112 +1,173 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { DollarSign, TrendingUp, Wallet } from 'lucide-react';
+import { AlertTriangle, UserX, ShieldOff } from "lucide-react";
 
-// Dados de exemplo para o dashboard
-const portfolioSummary = {
-  totalValue: 150000.75,
-  dailyChange: 1250.20,
-  dailyChangePercent: 0.84,
+// Dados fictícios
+const summary = {
+  totalVictims: 238,
+  totalLoss: 15473250.0,
+  recentCases: 12,
 };
 
-const investments = [
-  { id: 1, name: "Ações XYZ", type: "Ações", quantity: 100, purchasePrice: 50.00, currentPrice: 55.25, value: 5525.00, change: 10.50 },
-  { id: 2, name: "Fundo Imobiliário ABC", type: "FII", quantity: 50, purchasePrice: 100.00, currentPrice: 102.50, value: 5125.00, change: 2.50 },
-  { id: 3, name: "Tesouro Selic 2025", type: "Renda Fixa", quantity: 1, purchasePrice: 10000.00, currentPrice: 10150.00, value: 10150.00, change: 1.50 },
-  { id: 4, name: "CDB Banco Digital", type: "Renda Fixa", quantity: 1, purchasePrice: 20000.00, currentPrice: 20080.00, value: 20080.00, change: 0.40 },
+const victimProfiles = [
+  {
+    id: 1,
+    name: "João M.",
+    age: 52,
+    city: "Luanda",
+    type: "Falso Investimento",
+    loss: 250000.0,
+  },
+  {
+    id: 2,
+    name: "Maria A.",
+    age: 38,
+    city: "Benguela",
+    type: "Criptomoeda Fraudulenta",
+    loss: 785000.0,
+  },
+  {
+    id: 3,
+    name: "Carlos T.",
+    age: 47,
+    city: "Huíla",
+    type: "Golpe via WhatsApp",
+    loss: 18250.0,
+  },
+  {
+    id: 4,
+    name: "Ana P.",
+    age: 29,
+    city: "Lubango",
+    type: "Falso Empréstimo",
+    loss: 97000.0,
+  },
 ];
 
-const recentTransactions = [
-  { id: 1, type: "Compra", asset: "Ações XYZ", amount: 5000.00, date: "2024-07-28" },
-  { id: 2, type: "Venda", asset: "Fundo Imobiliário ABC", amount: 2000.00, date: "2024-07-25" },
-  { id: 3, type: "Depósito", asset: "Conta Corrente", amount: 10000.00, date: "2024-07-20" },
+const recentActions = [
+  {
+    id: 1,
+    type: "Alerta",
+    description: "Golpe com promessas de lucro rápido via Instagram",
+    date: "2025-08-05",
+  },
+  {
+    id: 2,
+    type: "Bloqueio",
+    description: "Encerramento de página falsa no Facebook",
+    date: "2025-08-04",
+  },
+  {
+    id: 3,
+    type: "Denúncia",
+    description: "Relato de burla com uso do nome de instituição bancária",
+    date: "2025-08-03",
+  },
 ];
 
-export default function InvestorDashboard() {
+export default function ScamVictimDashboard() {
   return (
     <div className="w-full max-w-6xl mx-auto grid gap-6 p-4 md:p-6">
-      <h1 className="text-3xl font-bold mb-4">Dashboard do Investidor</h1>
+      <h1 className="text-3xl font-bold mb-4">
+        Dashboard de Burlas Financeiras
+      </h1>
 
-      {/* Resumo do Portfólio */}
+      {/* Resumo Geral */}
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Valor Total do Portfólio</CardTitle>
-            <Wallet className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">
+              Total de Vítimas Identificadas
+            </CardTitle>
+            <UserX className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {portfolioSummary.totalValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-            </div>
+            <div className="text-2xl font-bold">{summary.totalVictims}</div>
             <p className="text-xs text-muted-foreground">
-              +20.1% desde o mês passado
+              Desde Janeiro de 2025
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Variação Diária</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">
+              Prejuízo Total Estimado
+            </CardTitle>
+            <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${portfolioSummary.dailyChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-              {portfolioSummary.dailyChange.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+            <div className="text-2xl font-bold text-red-600">
+              {summary.totalLoss.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "AOA",
+              })}
             </div>
-            <p className={`text-xs ${portfolioSummary.dailyChangePercent >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-              {portfolioSummary.dailyChangePercent.toFixed(2)}%
+            <p className="text-xs text-muted-foreground">
+              Valores estimados pelas denúncias
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Rendimentos</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">
+              Casos Recentes
+            </CardTitle>
+            <ShieldOff className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {/* Mock value for earnings */}
-              {1500.00.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              +5.2% desde o último rendimento
-            </p>
+            <div className="text-2xl font-bold">{summary.recentCases}</div>
+            <p className="text-xs text-muted-foreground">Nos últimos 7 dias</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Meus Investimentos */}
+      {/* Perfil das Vítimas */}
       <Card>
         <CardHeader>
-          <CardTitle>Meus Investimentos</CardTitle>
-          <CardDescription>Visão geral dos seus ativos atuais.</CardDescription>
+          <CardTitle>Casos Reportados</CardTitle>
+          <CardDescription>
+            Perfil de vítimas e perdas financeiras.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Ativo</TableHead>
-                <TableHead>Tipo</TableHead>
-                <TableHead>Quantidade</TableHead>
-                <TableHead>Preço Médio</TableHead>
-                <TableHead>Preço Atual</TableHead>
-                <TableHead>Valor Total</TableHead>
-                <TableHead className="text-right">Variação (%)</TableHead>
+                <TableHead>Nome</TableHead>
+                <TableHead>Idade</TableHead>
+                <TableHead>Cidade</TableHead>
+                <TableHead>Tipo de Burla</TableHead>
+                <TableHead className="text-right">Perda Estimada</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {investments.map((investment) => (
-                <TableRow key={investment.id}>
-                  <TableCell className="font-medium">{investment.name}</TableCell>
+              {victimProfiles.map((v) => (
+                <TableRow key={v.id}>
+                  <TableCell>{v.name}</TableCell>
+                  <TableCell>{v.age}</TableCell>
+                  <TableCell>{v.city}</TableCell>
                   <TableCell>
-                    <Badge variant="outline">{investment.type}</Badge>
+                    <Badge variant="destructive">{v.type}</Badge>
                   </TableCell>
-                  <TableCell>{investment.quantity}</TableCell>
-                  <TableCell>{investment.purchasePrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</TableCell>
-                  <TableCell>{investment.currentPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</TableCell>
-                  <TableCell>{investment.value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</TableCell>
-                  <TableCell className={`text-right ${investment.change >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                    {investment.change.toFixed(2)}%
+                  <TableCell className="text-right">
+                    {v.loss.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "AOA",
+                    })}
                   </TableCell>
                 </TableRow>
               ))}
@@ -115,39 +176,47 @@ export default function InvestorDashboard() {
         </CardContent>
       </Card>
 
-      {/* Transações Recentes */}
-      <Card>
+      {/* Ações Recentes */}
+      {/* <Card>
         <CardHeader>
-          <CardTitle>Transações Recentes</CardTitle>
-          <CardDescription>Suas últimas atividades de investimento.</CardDescription>
+          <CardTitle>Ações Recentes de Prevenção</CardTitle>
+          <CardDescription>
+            Medidas tomadas para combater golpes.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Tipo</TableHead>
-                <TableHead>Ativo</TableHead>
-                <TableHead>Valor</TableHead>
+                <TableHead>Descrição</TableHead>
                 <TableHead className="text-right">Data</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {recentTransactions.map((transaction) => (
-                <TableRow key={transaction.id}>
+              {recentActions.map((action) => (
+                <TableRow key={action.id}>
                   <TableCell>
-                    <Badge variant={transaction.type === "Compra" ? "default" : transaction.type === "Venda" ? "destructive" : "secondary"}>
-                      {transaction.type}
+                    <Badge
+                      variant={
+                        action.type === "Bloqueio"
+                          ? "default"
+                          : action.type === "Denúncia"
+                          ? "secondary"
+                          : "destructive"
+                      }
+                    >
+                      {action.type}
                     </Badge>
                   </TableCell>
-                  <TableCell className="font-medium">{transaction.asset}</TableCell>
-                  <TableCell>{transaction.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</TableCell>
-                  <TableCell className="text-right">{transaction.date}</TableCell>
+                  <TableCell>{action.description}</TableCell>
+                  <TableCell className="text-right">{action.date}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 }
