@@ -58,7 +58,7 @@ const bankDetailsSchema = z.object({
   name: z.string().min(2, "Informe o seu nome completo"),
   bank: z.string().min(2, "Informe o nome do banco"),
   accountNumber: z.string().min(2, "Informe o número da conta"),
-  province: z.string().min(2, "Informe a província"),
+  province: z.string().min(2),
   age: z.coerce.number().min(18, "Você deve ter pelo menos 18 anos"),
   amount: z.coerce.number().min(1, "Informe um valor válido"),
   profissao: z.string().min(2, "Informe a sua profissão"),
@@ -217,6 +217,33 @@ export default function BankDetailsWizard() {
 
                   <FormField
                     control={form.control}
+                    name="province"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Província</FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Seleccione a sua província" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {provincias.map((provincia) => (
+                                <SelectItem key={provincia} value={provincia}>
+                                  {provincia}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
                     name="profissao"
                     render={({ field }) => (
                       <FormItem>
@@ -269,34 +296,6 @@ export default function BankDetailsWizard() {
                               </Command>
                             </PopoverContent>
                           </Popover>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="province"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Província</FormLabel>
-                        <FormControl>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Seleccione a sua província" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {provincias.map((provincia) => (
-                                <SelectItem key={provincia} value={provincia}>
-                                  {provincia}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
