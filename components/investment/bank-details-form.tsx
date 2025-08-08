@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Copy, Loader2, Save } from "lucide-react";
+import { Copy, Loader2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -38,6 +38,7 @@ import { provincias } from "@/data/provincias"; // ajuste o caminho conforme nec
 
 import { provincia } from "@/db/schema";
 import { SuccessModal } from "./sucess-modal";
+import { IconMoneybag, IconMoneybagPlus } from "@tabler/icons-react";
 
 const bankDetailsSchema = z.object({
   name: z.string().min(2, "Informe o seu nome completo"),
@@ -338,8 +339,8 @@ export default function BankDetailsWizard() {
                     "Próximo"
                   ) : (
                     <>
-                      <Save className="h-4 w-4 mr-2" />
-                      Salvar os Dados e Finalizar
+                      <IconMoneybagPlus className="w-100 h-4 w-4 mr-2" />
+                      Investir
                     </>
                   )}
                 </Button>
