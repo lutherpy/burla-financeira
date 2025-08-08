@@ -34,7 +34,7 @@ export default function InvestorDashboard() {
       try {
         const res = await fetch("/api/investment");
         const data = await res.json();
-        console.log("Dados recebidos da API:", data); // <- Aqui o console.log
+        console.log("Dados recebidos da API:", data);
         setInvestments(data.data || []);
       } catch (error) {
         console.error("Erro ao buscar investimentos:", error);
@@ -44,8 +44,9 @@ export default function InvestorDashboard() {
     fetchData();
   }, []);
 
-  const now_vitims = new Date();
-  const fiveDaysAgo = new Date(now_vitims.getTime() - 5 * 24 * 60 * 60 * 1000);
+  const now = new Date();
+  const fiveDaysAgo = new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000);
+  const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
   const totalVictims = investments.filter((i) => {
     const createdAt = new Date(i.createdAt);
@@ -54,57 +55,57 @@ export default function InvestorDashboard() {
 
   const totalLoss = investments.reduce((sum, i) => sum + Number(i.amount), 0);
 
-  const now = new Date();
-  const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
   const recentCases = investments.filter((i) => {
     const createdAt = new Date(i.createdAt);
     return createdAt >= oneDayAgo;
   }).length;
 
   return (
-    <div className="w-full max-w-6xl mx-auto grid gap-6 p-4 md:p-6">
+    <div className="w-full max-w-6xl mx-auto grid gap-6 p-4 sm:p-6">
       {/* Título + Botão */}
-      <div className="flex flex-col gap-2 mb-4">
-        <h1 className="text-2xl md:text-3xl font-bold">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-center sm:text-left">
           Dashboard de Burlas Financeiras
         </h1>
-        <Link href="/investir">
-          <Button className="w-full sm:w-50" variant="default">
+        <Link href="/investir" className="w-full sm:w-auto">
+          <Button className="w-full sm:w-auto" variant="default">
             Simular
           </Button>
         </Link>
       </div>
 
       {/* Resumo Geral */}
-      <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
+            <CardTitle className="text-sm sm:text-base font-medium">
               Total de Vítimas Identificadas
             </CardTitle>
             <UserX className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalVictims}</div>
-            <p className="text-xs text-muted-foreground">Nos últimos 5 dias</p>
+            <div className="text-lg sm:text-2xl font-bold">{totalVictims}</div>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Nos últimos 5 dias
+            </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
+            <CardTitle className="text-sm sm:text-base font-medium">
               Prejuízo Total Estimado
             </CardTitle>
             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">
+            <div className="text-lg sm:text-2xl font-bold text-red-600">
               {totalLoss.toLocaleString("pt-BR", {
                 style: "currency",
                 currency: "AOA",
               })}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs sm:text-sm text-muted-foreground">
               Valor total dos investimentos
             </p>
           </CardContent>
@@ -112,33 +113,64 @@ export default function InvestorDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
+            <CardTitle className="text-sm sm:text-base font-medium">
               Casos Recentes
             </CardTitle>
             <ShieldOff className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{recentCases}</div>
-            <p className="text-xs text-muted-foreground">Nas últimas 24h</p>
+            <div className="text-lg sm:text-2xl font-bold">{recentCases}</div>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Nas últimas 24h
+            </p>
           </CardContent>
         </Card>
       </div>
 
-      {/* ✅ Tabela de Casos com dados reais da API */}
+      {/* Tabela / Lista responsiva */}
       <Card>
         <CardHeader>
-          <CardTitle>Casos Reportados</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-base sm:text-lg">
+            Casos Reportados
+          </CardTitle>
+          <CardDescription className="text-xs sm:text-sm">
             Perfil de vítimas e perdas financeiras com base nos dados reais.
           </CardDescription>
         </CardHeader>
-        <CardContent className="overflow-x-auto">
-          <DataTableServer
-            endpoint="/api/investment"
-            columns={columns}
-            titleColumn="name"
-            titleLabel="Nome"
-          />
+        <CardContent>
+          {/* Mobile → lista de cards */}
+          <div className="block sm:hidden space-y-3">
+            {investments.map((i) => (
+              <div
+                key={i.id}
+                className="p-3 rounded-lg border bg-muted/30 flex flex-col gap-1"
+              >
+                <p className="font-semibold">
+                  {i.name} — {i.age} anos
+                </p>
+                <p className="text-sm text-muted-foreground">{i.province}</p>
+                <p className="text-sm font-bold text-red-600">
+                  {i.amount.toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency: "AOA",
+                  })}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {new Date(i.createdAt).toLocaleDateString("pt-BR")}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Tablet/Desktop → tabela */}
+          <div className="hidden sm:block overflow-x-auto">
+            <DataTableServer
+              endpoint="/api/investment"
+              columns={columns}
+              titleColumn="name"
+              titleLabel="Nome"
+            />
+          </div>
         </CardContent>
       </Card>
     </div>
