@@ -1,11 +1,24 @@
 "use client";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -34,11 +47,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { provincias } from "@/data/provincias"; // ajuste o caminho conforme necessário
+import { provincias } from "@/data/provincias";
+import { profissoes } from "@/data/profissoes"; // ajuste o caminho conforme necessário
 
-import { provincia } from "@/db/schema";
 import { SuccessModal } from "./sucess-modal";
 import { IconMoneybagPlus } from "@tabler/icons-react";
+import { cn } from "@/lib/utils";
 
 const bankDetailsSchema = z.object({
   name: z.string().min(2, "Informe o seu nome completo"),
@@ -47,10 +61,10 @@ const bankDetailsSchema = z.object({
   province: z.string().min(2, "Informe a província"),
   age: z.coerce.number().min(18, "Você deve ter pelo menos 18 anos"),
   amount: z.coerce.number().min(1, "Informe um valor válido"),
+  profissao: z.string().min(2, "Informe a sua profissão"),
 });
 
 type BankDetailsFormData = z.infer<typeof bankDetailsSchema>;
-export type Provincia = typeof provincia.$inferSelect;
 
 export default function BankDetailsWizard() {
   const [isLoading, setIsLoading] = useState(false);
@@ -69,13 +83,14 @@ export default function BankDetailsWizard() {
       province: "",
       age: 18,
       amount: 0,
+      profissao: "",
     },
   });
 
   const handleNextStep = async () => {
     let isValid = false;
     if (currentStep === 0) {
-      isValid = await form.trigger(["name", "age", "province"]);
+      isValid = await form.trigger(["name", "age", "profissao", "province"]);
     } else if (currentStep === 1) {
       isValid = await form.trigger(["bank", "accountNumber", "amount"]); // <-- aqui
     }
@@ -197,6 +212,66 @@ export default function BankDetailsWizard() {
                         <FormMessage />
                       </FormItem>
                     )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="profissao"
+                    render={({ field }) => {
+                      const [open, setOpen] = useState(false);
+
+                      return (
+                        <FormItem>
+                          <FormLabel>Profissão</FormLabel>
+                          <FormControl>
+                            <Popover open={open} onOpenChange={setOpen}>
+                              <PopoverTrigger asChild>
+                                <button
+                                  type="button"
+                                  role="combobox"
+                                  aria-expanded={open}
+                                  className="w-full justify-between border rounded-md px-3 py-2 text-sm"
+                                >
+                                  {field.value || "Seleccione a sua profissão"}
+                                </button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-full p-0">
+                                <Command>
+                                  <CommandInput placeholder="Pesquisar profissão..." />
+                                  <CommandList>
+                                    <CommandEmpty>
+                                      Nenhum resultado encontrado.
+                                    </CommandEmpty>
+                                    <CommandGroup>
+                                      {profissoes.map((profissao) => (
+                                        <CommandItem
+                                          key={profissao}
+                                          onSelect={() => {
+                                            field.onChange(profissao);
+                                            setOpen(false);
+                                          }}
+                                        >
+                                          <Check
+                                            className={cn(
+                                              " h-4 w-4",
+                                              field.value === profissao
+                                                ? "opacity-100"
+                                                : "opacity-0"
+                                            )}
+                                          />
+                                          {profissao}
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
                   />
 
                   <FormField

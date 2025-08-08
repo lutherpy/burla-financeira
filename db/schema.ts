@@ -16,6 +16,7 @@ export const investmentSimulation = pgTable("investment_simulation", {
   province: text("province").notNull(),
   age: integer("age").notNull(),
   amount: numeric("amount", { precision: 12, scale: 2 }).notNull(),
+  profissao: text("profissao").notNull(),
 
   createdAt: timestamp("created_at", { withTimezone: true })
     .$defaultFn(() => new Date())
@@ -27,5 +28,11 @@ export const provincia = pgTable("provincia", {
   nome: text("nome").notNull(),
 });
 
+export const profissao = pgTable("profissao", {
+  id: serial("id").primaryKey(),
+  nome: text("nome").notNull(),
+});
+
 export type investmentSimulation = typeof investmentSimulation.$inferSelect;
 export type Provincia = typeof provincia.$inferSelect;
+export type Profissao = typeof profissao.$inferSelect;

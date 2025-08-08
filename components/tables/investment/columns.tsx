@@ -16,6 +16,10 @@ export const columns: ColumnDef<investmentSimulation>[] = [
     header: "Conta",
   },
   {
+    accessorKey: "profissao",
+    header: "Profissão",
+  },
+  {
     accessorKey: "province",
     header: "Província",
   },

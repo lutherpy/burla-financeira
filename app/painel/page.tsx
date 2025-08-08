@@ -1,4 +1,5 @@
 "use client";
+// app/exemplos/export-button/page.tsx
 
 import { useEffect, useState } from "react";
 import {
@@ -14,6 +15,7 @@ import { DataTableServer } from "@/components/data-table-server";
 import { columns } from "@/components/tables/investment/columns";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import QuickExportButton from "@/components/data-exporter-button";
 
 type Investment = {
   id: string;
@@ -160,6 +162,39 @@ export default function InvestorDashboard() {
                 </p>
               </div>
             ))}
+          </div>
+          <div className="flex gap-2">
+            <QuickExportButton
+              config={{
+                apiUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/api/investment`,
+                filename: "vitimas_financeiras",
+                title: "Vítimas Financeiras",
+                columns: [
+                  { key: "name", label: "Nome" },
+                  { key: "province", label: "Província" },
+                  { key: "profissao", label: "Profissão" },
+                  { key: "createdAt", label: "Criado em" },
+                ],
+              }}
+              format="excel"
+              label="Exportar Excel"
+            />
+
+            <QuickExportButton
+              config={{
+                apiUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/api/investment`,
+                filename: "vitimas_financeiras",
+                title: "Vítimas Financeiras",
+                columns: [
+                  { key: "name", label: "Nome" },
+                  { key: "province", label: "Província" },
+                  { key: "profissao", label: "Profissão" },
+                  { key: "createdAt", label: "Criado em" },
+                ],
+              }}
+              format="pdf"
+              label="Exportar PDF"
+            />
           </div>
 
           {/* Tablet/Desktop → tabela */}

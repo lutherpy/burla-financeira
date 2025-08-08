@@ -12,6 +12,7 @@ const simulationSchema = z.object({
   province: z.string().min(2),
   age: z.coerce.number().min(18),
   amount: z.coerce.number().min(1), // <- ainda como número aqui
+  profissao: z.string().min(2),
 });
 
 export async function POST(req: NextRequest) {
@@ -29,6 +30,7 @@ export async function POST(req: NextRequest) {
       province: parsed.province,
       age: parsed.age,
       amount: parsed.amount.toString(), // 👈 necessário
+      profissao: parsed.profissao,
     });
 
     return NextResponse.json({ success: true });
@@ -57,4 +59,5 @@ export const GET = getListHandler(investmentSimulation, {
   age: investmentSimulation.age,
   amount: investmentSimulation.amount,
   createdAt: investmentSimulation.createdAt,
+  profissao: investmentSimulation.profissao,
 });
