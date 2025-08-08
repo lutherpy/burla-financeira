@@ -1,1 +1,1 @@
-- Adicionar o header com revalidate para melhor performance
+- Adicionar o header com revalidate para melhor performance.
