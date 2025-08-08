@@ -211,7 +211,7 @@ export default function BankDetailsWizard() {
                             defaultValue={field.value}
                           >
                             <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Selecione uma província" />
+                              <SelectValue placeholder="Seleccione a sua província" />
                             </SelectTrigger>
                             <SelectContent>
                               {provincias.map((provincia) => (
@@ -250,7 +250,7 @@ export default function BankDetailsWizard() {
                       <FormItem>
                         <FormLabel>Número da Conta</FormLabel>
                         <FormControl>
-                          <Input placeholder="Ex: 12345-6" {...field} />
+                          <Input placeholder="Ex: 9387387210001" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -355,7 +355,7 @@ export default function BankDetailsWizard() {
       </CardContent>
       <CardFooter>
         <p className="text-sm text-muted-foreground">
-          Seus dados estão seguros e serão usados apenas para fins de
+          Os seus dados estão seguros e serão utilizados apenas para fins de
           investimento.
         </p>
       </CardFooter>
