@@ -1,3 +1,7 @@
+"use client";
+
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,9 +11,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Link from "next/link";
+import { Loader2 } from "lucide-react";
 
 export default function InvestmentPrompt() {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [loading, setLoading] = useState(false);
+
+  const handleClick = () => {
+    setLoading(true);
+    startTransition(() => {
+      router.push("/investir");
+    });
+  };
+
   return (
     <div className="flex flex-col md:flex-row gap-6 w-full max-w-4xl mx-auto">
       {/* Card da imagem */}
@@ -31,20 +46,31 @@ export default function InvestmentPrompt() {
           </CardDescription>
         </CardHeader>
         <CardContent className="text-center space-y-2">
-          <p className="">
+          <p>
             Algumas acções vão disparar nas próximas semanas e só os grandes
             investidores têm essa informação!
           </p>
-          <p className="">
+          <p>
             Com um depósito de AKZ50.000, tu entras na nossa sala privada de
             investimentos e recebes as recomendações em primeira mão. Aproveite
             antes que feche! Clique no botão abaixo se estiveres interessado!
           </p>
         </CardContent>
         <CardFooter className="flex justify-center">
-          <Link href="/investir">
-            <Button className="w-full">Prosseguir para Investir</Button>
-          </Link>
+          <Button
+            className="w-full"
+            onClick={handleClick}
+            disabled={loading || isPending}
+          >
+            {loading || isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Carregando...
+              </>
+            ) : (
+              "Prosseguir para Investir"
+            )}
+          </Button>
         </CardFooter>
       </Card>
     </div>
