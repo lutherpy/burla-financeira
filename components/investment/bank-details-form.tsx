@@ -276,7 +276,7 @@ export default function BankDetailsWizard() {
                   />
                   <FormItem>
                     <FormLabel>Referência de Pagamento</FormLabel>
-                    <div className="flex gap-2">
+                    {/* <div className="flex gap-2">
                       <Input
                         readOnly
                         value={paymentReference || "Clique em Gerar Referência"}
@@ -290,7 +290,7 @@ export default function BankDetailsWizard() {
                       >
                         Gerar Referência
                       </Button>
-                    </div>
+                    </div> */}
                     {paymentReference && (
                       <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
                         <span>
@@ -340,7 +340,7 @@ export default function BankDetailsWizard() {
                   ) : (
                     <>
                       <IconMoneybagPlus className="w-100 h-4 w-4 mr-2" />
-                      Investir
+                      Clique para Investir
                     </>
                   )}
                 </Button>

@@ -26,8 +26,8 @@ export default function InvestmentPrompt() {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Pronto para Investir?</CardTitle>
           <CardDescription>
-            Olá! Sou analista da BODIVA e ofereço aqui uma chance exclusiva para
-            investires com acesso privilegiado.
+            Olá! Sou um analista financeiro registado pela CMC e ofereço aqui
+            uma chance exclusiva para investires com acesso privilegiado.
           </CardDescription>
         </CardHeader>
         <CardContent className="text-center space-y-2">

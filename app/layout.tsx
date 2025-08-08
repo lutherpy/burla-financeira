@@ -18,9 +18,8 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Sirius Model",
-  description:
-    "Modelo para aplicações do Sector de Desenvolvimento de Sistemas Aplicacionais",
+  title: "CMC Investe",
+  description: "Sistema de Investimento",
 };
 
 export default async function RootLayout({
