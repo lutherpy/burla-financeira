@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Copy, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -38,7 +38,7 @@ import { provincias } from "@/data/provincias"; // ajuste o caminho conforme nec
 
 import { provincia } from "@/db/schema";
 import { SuccessModal } from "./sucess-modal";
-import { IconMoneybag, IconMoneybagPlus } from "@tabler/icons-react";
+import { IconMoneybagPlus } from "@tabler/icons-react";
 
 const bankDetailsSchema = z.object({
   name: z.string().min(2, "Informe o seu nome completo"),
@@ -55,7 +55,7 @@ export type Provincia = typeof provincia.$inferSelect;
 export default function BankDetailsWizard() {
   const [isLoading, setIsLoading] = useState(false);
 
-  const [paymentReference, setPaymentReference] = useState<string | null>(null);
+  //const [paymentReference, setPaymentReference] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(0); // 0 for Personal, 1 for Investment
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -123,21 +123,21 @@ export default function BankDetailsWizard() {
     }
   };
 
-  const generatePaymentReference = () => {
-    const ref = `REF-${Math.random()
-      .toString(36)
-      .substring(2, 10)
-      .toUpperCase()}-${Date.now().toString().slice(-4)}`;
-    setPaymentReference(ref);
-    toast.success("Referência gerada com sucesso");
-  };
+  // const generatePaymentReference = () => {
+  //   const ref = `REF-${Math.random()
+  //     .toString(36)
+  //     .substring(2, 10)
+  //     .toUpperCase()}-${Date.now().toString().slice(-4)}`;
+  //   setPaymentReference(ref);
+  //   toast.success("Referência gerada com sucesso");
+  // };
 
-  const copyToClipboard = () => {
-    if (paymentReference) {
-      navigator.clipboard.writeText(paymentReference);
-      toast.success("Referência copiada para a área de transferência");
-    }
-  };
+  // const copyToClipboard = () => {
+  //   if (paymentReference) {
+  //     navigator.clipboard.writeText(paymentReference);
+  //     toast.success("Referência copiada para a área de transferência");
+  //   }
+  // };
 
   return (
     <Card className="w-full max-w-md">
@@ -291,7 +291,7 @@ export default function BankDetailsWizard() {
                         Gerar Referência
                       </Button>
                     </div> */}
-                    {paymentReference && (
+                    {/* {paymentReference && (
                       <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
                         <span>
                           Sua referência:{" "}
@@ -310,7 +310,7 @@ export default function BankDetailsWizard() {
                           <Copy className="h-4 w-4" />
                         </Button>
                       </div>
-                    )}
+                    )} */}
                   </FormItem>
                 </div>
               </TabsContent>
