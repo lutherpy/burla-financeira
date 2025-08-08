@@ -73,6 +73,7 @@ export default function BankDetailsWizard() {
   const [currentStep, setCurrentStep] = useState(0); // 0 for Personal, 1 for Investment
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isProfissaoOpen, setIsProfissaoOpen] = useState(false);
 
   const form = useForm<BankDetailsFormData>({
     resolver: zodResolver(bankDetailsSchema),
@@ -217,61 +218,61 @@ export default function BankDetailsWizard() {
                   <FormField
                     control={form.control}
                     name="profissao"
-                    render={({ field }) => {
-                      const [open, setOpen] = useState(false);
-
-                      return (
-                        <FormItem>
-                          <FormLabel>Profissão</FormLabel>
-                          <FormControl>
-                            <Popover open={open} onOpenChange={setOpen}>
-                              <PopoverTrigger asChild>
-                                <button
-                                  type="button"
-                                  role="combobox"
-                                  aria-expanded={open}
-                                  className="w-full justify-between border rounded-md px-3 py-2 text-sm"
-                                >
-                                  {field.value || "Seleccione a sua profissão"}
-                                </button>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-full p-0">
-                                <Command>
-                                  <CommandInput placeholder="Pesquisar profissão..." />
-                                  <CommandList>
-                                    <CommandEmpty>
-                                      Nenhum resultado encontrado.
-                                    </CommandEmpty>
-                                    <CommandGroup>
-                                      {profissoes.map((profissao) => (
-                                        <CommandItem
-                                          key={profissao}
-                                          onSelect={() => {
-                                            field.onChange(profissao);
-                                            setOpen(false);
-                                          }}
-                                        >
-                                          <Check
-                                            className={cn(
-                                              " h-4 w-4",
-                                              field.value === profissao
-                                                ? "opacity-100"
-                                                : "opacity-0"
-                                            )}
-                                          />
-                                          {profissao}
-                                        </CommandItem>
-                                      ))}
-                                    </CommandGroup>
-                                  </CommandList>
-                                </Command>
-                              </PopoverContent>
-                            </Popover>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      );
-                    }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Profissão</FormLabel>
+                        <FormControl>
+                          <Popover
+                            open={isProfissaoOpen}
+                            onOpenChange={setIsProfissaoOpen}
+                          >
+                            <PopoverTrigger asChild>
+                              <button
+                                type="button"
+                                role="combobox"
+                                aria-expanded={isProfissaoOpen}
+                                aria-controls="profissoes-list"
+                                className="w-full justify-between border rounded-md px-3 py-2 text-sm"
+                              >
+                                {field.value || "Seleccione a sua profissão"}
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-full p-0">
+                              <Command>
+                                <CommandInput placeholder="Pesquisar profissão..." />
+                                <CommandList id="profissoes-list">
+                                  <CommandEmpty>
+                                    Nenhum resultado encontrado.
+                                  </CommandEmpty>
+                                  <CommandGroup>
+                                    {profissoes.map((profissao) => (
+                                      <CommandItem
+                                        key={profissao}
+                                        onSelect={() => {
+                                          field.onChange(profissao);
+                                          setIsProfissaoOpen(false);
+                                        }}
+                                      >
+                                        <Check
+                                          className={cn(
+                                            "h-4 w-4",
+                                            field.value === profissao
+                                              ? "opacity-100"
+                                              : "opacity-0"
+                                          )}
+                                        />
+                                        {profissao}
+                                      </CommandItem>
+                                    ))}
+                                  </CommandGroup>
+                                </CommandList>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
 
                   <FormField
