@@ -144,7 +144,7 @@ export default function BankDetailsWizard() {
       <CardHeader>
         <CardTitle className="text-2xl">Configuração de Perfil</CardTitle>
         <CardDescription>
-          Por favor, insira seus dados para configurar seu perfil de
+          Por favor, insira os seus dados para configurar o seu perfil de
           investimento.
         </CardDescription>
       </CardHeader>
@@ -274,9 +274,9 @@ export default function BankDetailsWizard() {
                       </FormItem>
                     )}
                   />
-                  <FormItem>
-                    <FormLabel>Referência de Pagamento</FormLabel>
-                    {/* <div className="flex gap-2">
+                  {/* <FormItem>
+                    <FormLabel></FormLabel>
+                    <div className="flex gap-2">
                       <Input
                         readOnly
                         value={paymentReference || "Clique em Gerar Referência"}
@@ -291,7 +291,7 @@ export default function BankDetailsWizard() {
                         Gerar Referência
                       </Button>
                     </div> */}
-                    {/* {paymentReference && (
+                  {/* {paymentReference && (
                       <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
                         <span>
                           Sua referência:{" "}
@@ -310,8 +310,8 @@ export default function BankDetailsWizard() {
                           <Copy className="h-4 w-4" />
                         </Button>
                       </div>
-                    )} */}
-                  </FormItem>
+                    )} 
+                  </FormItem>*/}
                 </div>
               </TabsContent>
 
