@@ -37,7 +37,7 @@ interface DataTableServerProps<TData, TValue> {
   filterLabel?: string; // rótulo exibido no filtro
 }
 
-export function DataTableServer<TData extends Record<string, any>, TValue>({
+export function DataTableServer<TData extends Record<string, unknown>, TValue>({
   endpoint,
   columns,
   titleColumn,

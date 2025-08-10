@@ -14,13 +14,6 @@ import { columns } from "@/components/tables/investment/columns";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import QuickExportButton from "@/components/data-exporter-button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 type Investment = {
   id: string;
@@ -36,8 +29,6 @@ type Investment = {
 
 export default function InvestorDashboard() {
   const [investments, setInvestments] = useState<Investment[]>([]);
-  const [profissoes, setProfissoes] = useState<string[]>([]);
-  const [selectedProfissao, setSelectedProfissao] = useState<string>("");
 
   // Buscar investimentos
   useEffect(() => {
@@ -53,24 +44,8 @@ export default function InvestorDashboard() {
     fetchData();
   }, []);
 
-  // Buscar profissões
-  useEffect(() => {
-    const fetchProfissoes = async () => {
-      try {
-        const res = await fetch("/api/profissao");
-        const data = await res.json();
-        setProfissoes(data.data || []);
-      } catch (error) {
-        console.error("Erro ao buscar profissões:", error);
-      }
-    };
-    fetchProfissoes();
-  }, []);
-
-  // Filtrar investimentos pela profissão selecionada
-  const filteredInvestments = selectedProfissao
-    ? investments.filter((i) => i.profissao === selectedProfissao)
-    : investments;
+  // Filtrar investimentos (sem filtro local, filtragem feita pelo DataTableServer)
+  const filteredInvestments = investments;
 
   const now = new Date();
   const fiveDaysAgo = new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000);
