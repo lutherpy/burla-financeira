@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import useSWR from "swr";
 import {
   ColumnDef,
@@ -36,7 +36,7 @@ interface DataTableServerProps<TData, TValue> {
   titleLabel: string;
 }
 
-export function DataTableServer<TData, TValue>({
+export function DataTableServer<TData extends { profissao?: string }, TValue>({
   endpoint,
   columns,
   titleColumn,
@@ -44,6 +44,7 @@ export function DataTableServer<TData, TValue>({
 }: DataTableServerProps<TData, TValue>) {
   const [inputSearch, setInputSearch] = useState("");
   const [search, setSearch] = useState("");
+  const [selectedProfissao, setSelectedProfissao] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [orderBy, setOrderBy] = useState("createdAt");
@@ -59,31 +60,33 @@ export function DataTableServer<TData, TValue>({
       return res.json();
     },
     {
-      revalidateOnFocus: false, // Não revalidar ao focar na janela
-      dedupingInterval: 50000, // Evita requisições duplicadas em 50 segundos
-      refreshInterval: 50000, // Atualiza a cada 50 segundos
-      focusThrottleInterval: 10000, // Evita revalidação excessiva ao focar
-      onLoadingSlow: (key) => {
-        console.log(
-          `[SWR] Requisição lenta para chave:`,
-          key,
-          `- Tempo limite: 10 segundos`
-        );
-      },
-      onError: (error, key) => {
-        console.error(`[SWR] Erro ao buscar dados para chave:`, key, error);
-      },
-      onSuccess: (data, key) => {
-        console.log(
-          `[SWR] Atualizado em ${new Date().toLocaleTimeString()} para chave:`,
-          key
-        );
-      },
+      revalidateOnFocus: false,
+      dedupingInterval: 50000,
+      refreshInterval: 50000,
+      focusThrottleInterval: 10000,
     }
   );
 
+  // 🔽 Extrai profissões únicas
+  const profissoes = useMemo(() => {
+    if (!data?.data) return [];
+    const list = Array.from(
+      new Set(data.data.map((item: TData) => item.profissao).filter(Boolean))
+    ) as string[];
+    return list.sort();
+  }, [data]);
+
+  // 🔽 Filtra no front-end pela profissão selecionada
+  const filteredData = useMemo(() => {
+    if (!selectedProfissao || selectedProfissao === "all")
+      return data?.data || [];
+    return (data?.data || []).filter(
+      (item: TData) => item.profissao === selectedProfissao
+    );
+  }, [data, selectedProfissao]);
+
   const table = useReactTable({
-    data: data?.data || [],
+    data: filteredData,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
@@ -127,21 +130,22 @@ export function DataTableServer<TData, TValue>({
   return (
     <div className="space-y-4">
       {/* Filtros */}
-      <div className="flex items-end gap-4 mt-4 flex-wrap">
+      {/* Filtros */}
+      <div className="flex items-end gap-3 mt-4 flex-nowrap overflow-x-auto">
         {/* Campo de busca */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
             handleSubmitSearch();
           }}
-          className="relative w-80"
+          className="relative w-48"
         >
           <Input
             type="text"
-            placeholder="🔍 Filtrar por nome..."
+            placeholder="🔍 Nome..."
             value={inputSearch}
             onChange={(e) => setInputSearch(e.target.value)}
-            className="pr-10"
+            className="pr-8 h-9 text-sm"
           />
           {inputSearch && (
             <button
@@ -149,19 +153,38 @@ export function DataTableServer<TData, TValue>({
               onClick={handleClearSearch}
               className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500"
             >
-              <X size={16} />
+              <X size={14} />
             </button>
           )}
         </form>
 
+        {/* Filtro por profissão */}
+        <div className="w-40">
+          <label className="text-xs font-medium block mb-1">Profissão</label>
+          <Select
+            value={selectedProfissao}
+            onValueChange={(value) => setSelectedProfissao(value)}
+          >
+            <SelectTrigger className="w-full h-9 text-sm">
+              <SelectValue placeholder="Todas" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas</SelectItem>
+              {profissoes.map((prof) => (
+                <SelectItem key={prof} value={prof}>
+                  {prof}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         {/* Ordenar por */}
-        <div className="w-48">
-          <label className="text-sm font-medium block mb-1">Ordenar por</label>
+        <div className="w-40">
+          <label className="text-xs font-medium block mb-1">Ordenar por</label>
           <Select value={orderBy} onValueChange={setOrderBy}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Ordenar por">
-                {getOrderLabel(orderBy)}
-              </SelectValue>
+            <SelectTrigger className="w-full h-9 text-sm">
+              <SelectValue>{getOrderLabel(orderBy)}</SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value={titleColumn}>{titleLabel}</SelectItem>
@@ -172,29 +195,25 @@ export function DataTableServer<TData, TValue>({
         </div>
 
         {/* Ordem */}
-        <div className="w-48">
-          <label className="text-sm font-medium block mb-1">Ordem</label>
+        <div className="w-28">
+          <label className="text-xs font-medium block mb-1">Ordem</label>
           <Select
             value={orderDir}
             onValueChange={(value) => setOrderDir(value as "asc" | "desc")}
           >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Direção">
-                {orderDir === "asc" ? "Ascendente" : "Descendente"}
-              </SelectValue>
+            <SelectTrigger className="w-full h-9 text-sm">
+              <SelectValue>{orderDir === "asc" ? "Asc" : "Desc"}</SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="asc">Ascendente</SelectItem>
-              <SelectItem value="desc">Descendente</SelectItem>
+              <SelectItem value="asc">Asc</SelectItem>
+              <SelectItem value="desc">Desc</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         {/* Itens por página */}
-        <div className="w-48">
-          <label className="text-sm font-medium block mb-1">
-            Itens por página
-          </label>
+        <div className="w-28">
+          <label className="text-xs font-medium block mb-1">Itens</label>
           <Select
             value={String(limit)}
             onValueChange={(value) => {
@@ -202,8 +221,8 @@ export function DataTableServer<TData, TValue>({
               setPage(1);
             }}
           >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Itens por página">{limit}</SelectValue>
+            <SelectTrigger className="w-full h-9 text-sm">
+              <SelectValue>{limit}</SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="5">5</SelectItem>
@@ -215,9 +234,10 @@ export function DataTableServer<TData, TValue>({
         </div>
 
         {/* Botão pesquisar */}
-        <div>
-          <label className="block h-5" />
-          <Button onClick={handleSubmitSearch}>Pesquisar</Button>
+        <div className="flex items-end">
+          <Button size="sm" onClick={handleSubmitSearch}>
+            Pesquisar
+          </Button>
         </div>
       </div>
 

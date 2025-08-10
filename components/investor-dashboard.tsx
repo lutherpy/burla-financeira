@@ -14,6 +14,13 @@ import { columns } from "@/components/tables/investment/columns";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import QuickExportButton from "@/components/data-exporter-button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type Investment = {
   id: string;
@@ -24,38 +31,62 @@ type Investment = {
   bank: string;
   accountNumber: string;
   createdAt: string;
+  profissao?: string;
 };
 
 export default function InvestorDashboard() {
   const [investments, setInvestments] = useState<Investment[]>([]);
+  const [profissoes, setProfissoes] = useState<string[]>([]);
+  const [selectedProfissao, setSelectedProfissao] = useState<string>("");
 
+  // Buscar investimentos
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await fetch("/api/investment");
         const data = await res.json();
-        console.log("Dados recebidos da API:", data);
         setInvestments(data.data || []);
       } catch (error) {
         console.error("Erro ao buscar investimentos:", error);
       }
     };
-
     fetchData();
   }, []);
+
+  // Buscar profissões
+  useEffect(() => {
+    const fetchProfissoes = async () => {
+      try {
+        const res = await fetch("/api/profissao");
+        const data = await res.json();
+        setProfissoes(data.data || []);
+      } catch (error) {
+        console.error("Erro ao buscar profissões:", error);
+      }
+    };
+    fetchProfissoes();
+  }, []);
+
+  // Filtrar investimentos pela profissão selecionada
+  const filteredInvestments = selectedProfissao
+    ? investments.filter((i) => i.profissao === selectedProfissao)
+    : investments;
 
   const now = new Date();
   const fiveDaysAgo = new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000);
   const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-  const totalVictims = investments.filter((i) => {
+  const totalVictims = filteredInvestments.filter((i) => {
     const createdAt = new Date(i.createdAt);
     return createdAt >= fiveDaysAgo;
   }).length;
 
-  const totalLoss = investments.reduce((sum, i) => sum + Number(i.amount), 0);
+  const totalLoss = filteredInvestments.reduce(
+    (sum, i) => sum + Number(i.amount),
+    0
+  );
 
-  const recentCases = investments.filter((i) => {
+  const recentCases = filteredInvestments.filter((i) => {
     const createdAt = new Date(i.createdAt);
     return createdAt >= oneDayAgo;
   }).length;
@@ -140,7 +171,7 @@ export default function InvestorDashboard() {
         <CardContent>
           {/* Mobile → lista de cards */}
           <div className="block sm:hidden space-y-3">
-            {investments.map((i) => (
+            {filteredInvestments.map((i) => (
               <div
                 key={i.id}
                 className="p-3 rounded-lg border bg-muted/30 flex flex-col gap-1"
@@ -149,6 +180,7 @@ export default function InvestorDashboard() {
                   {i.name} — {i.age} anos
                 </p>
                 <p className="text-sm text-muted-foreground">{i.province}</p>
+                <p className="text-sm">{i.profissao}</p>
                 <p className="text-sm font-bold text-red-600">
                   {i.amount.toLocaleString("pt-BR", {
                     style: "currency",
@@ -163,7 +195,7 @@ export default function InvestorDashboard() {
           </div>
 
           {/* Botões de exportação */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 my-3">
             <QuickExportButton
               config={{
                 apiUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/api/investment`,
