@@ -163,7 +163,7 @@ export function DataTableServer<TData extends Record<string, any>, TValue>({
         {filterField && (
           <div className="w-40">
             <label className="text-xs font-medium block mb-1">
-              {filterLabel || filterField}
+              {filterLabel || String(filterField)}
             </label>
             <Select
               value={selectedFilter}
