@@ -8,7 +8,6 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
 import {
   Table,
   TableBody,
@@ -34,17 +33,21 @@ interface DataTableServerProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   titleColumn: string;
   titleLabel: string;
+  filterField?: keyof TData; // campo que será usado para filtro dinâmico
+  filterLabel?: string; // rótulo exibido no filtro
 }
 
-export function DataTableServer<TData extends { profissao?: string }, TValue>({
+export function DataTableServer<TData extends Record<string, any>, TValue>({
   endpoint,
   columns,
   titleColumn,
   titleLabel,
+  filterField,
+  filterLabel,
 }: DataTableServerProps<TData, TValue>) {
   const [inputSearch, setInputSearch] = useState("");
   const [search, setSearch] = useState("");
-  const [selectedProfissao, setSelectedProfissao] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState("all");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [orderBy, setOrderBy] = useState("createdAt");
@@ -54,7 +57,7 @@ export function DataTableServer<TData extends { profissao?: string }, TValue>({
     `${endpoint}?page=${page}&limit=${limit}&search=${encodeURIComponent(
       search
     )}&orderBy=${orderBy}&orderDir=${orderDir}`,
-    async (url: string | URL | Request) => {
+    async (url: string) => {
       const res = await fetch(url);
       if (!res.ok) throw new Error("Erro ao buscar dados");
       return res.json();
@@ -67,23 +70,22 @@ export function DataTableServer<TData extends { profissao?: string }, TValue>({
     }
   );
 
-  // 🔽 Extrai profissões únicas
-  const profissoes = useMemo(() => {
-    if (!data?.data) return [];
+  // Lista única do campo dinâmico
+  const filterOptions = useMemo(() => {
+    if (!data?.data || !filterField) return [];
     const list = Array.from(
-      new Set(data.data.map((item: TData) => item.profissao).filter(Boolean))
+      new Set(data.data.map((item: TData) => item[filterField]).filter(Boolean))
     ) as string[];
     return list.sort();
-  }, [data]);
+  }, [data, filterField]);
 
-  // 🔽 Filtra no front-end pela profissão selecionada
+  // Filtragem no front
   const filteredData = useMemo(() => {
-    if (!selectedProfissao || selectedProfissao === "all")
-      return data?.data || [];
+    if (!filterField || selectedFilter === "all") return data?.data || [];
     return (data?.data || []).filter(
-      (item: TData) => item.profissao === selectedProfissao
+      (item: TData) => item[filterField] === selectedFilter
     );
-  }, [data, selectedProfissao]);
+  }, [data, filterField, selectedFilter]);
 
   const table = useReactTable({
     data: filteredData,
@@ -130,7 +132,6 @@ export function DataTableServer<TData extends { profissao?: string }, TValue>({
   return (
     <div className="space-y-4">
       {/* Filtros */}
-      {/* Filtros */}
       <div className="flex items-end gap-3 mt-4 flex-nowrap overflow-x-auto">
         {/* Campo de busca */}
         <form
@@ -158,26 +159,30 @@ export function DataTableServer<TData extends { profissao?: string }, TValue>({
           )}
         </form>
 
-        {/* Filtro por profissão */}
-        <div className="w-40">
-          <label className="text-xs font-medium block mb-1">Profissão</label>
-          <Select
-            value={selectedProfissao}
-            onValueChange={(value) => setSelectedProfissao(value)}
-          >
-            <SelectTrigger className="w-full h-9 text-sm">
-              <SelectValue placeholder="Todas" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todas</SelectItem>
-              {profissoes.map((prof) => (
-                <SelectItem key={prof} value={prof}>
-                  {prof}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {/* Filtro dinâmico */}
+        {filterField && (
+          <div className="w-40">
+            <label className="text-xs font-medium block mb-1">
+              {filterLabel || filterField}
+            </label>
+            <Select
+              value={selectedFilter}
+              onValueChange={(value) => setSelectedFilter(value)}
+            >
+              <SelectTrigger className="w-full h-9 text-sm">
+                <SelectValue placeholder="Todas" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas</SelectItem>
+                {filterOptions.map((opt) => (
+                  <SelectItem key={opt} value={opt}>
+                    {opt}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
 
         {/* Ordenar por */}
         <div className="w-40">
