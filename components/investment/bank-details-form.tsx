@@ -59,7 +59,7 @@ const bankDetailsSchema = z.object({
   bank: z.string().min(2, "Informe o nome do banco"),
   accountNumber: z.string().min(2, "Informe o número da conta"),
   province: z.string().min(2),
-  age: z.coerce.number().min(18, "Você deve ter pelo menos 18 anos"),
+  age: z.coerce.number().min(18, "Deve ter pelo menos 18 anos"),
   amount: z.coerce.number().min(1, "Informe um valor válido"),
   profissao: z.string().min(2, "Informe a sua profissão"),
 });
