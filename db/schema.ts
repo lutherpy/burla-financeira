@@ -30,7 +30,7 @@ export const provincia = pgTable("provincia", {
 
 export const profissao = pgTable("profissao", {
   id: serial("id").primaryKey(),
-  nome: text("nome").notNull(),
+  nome: text("nome").notNull().unique(),
 });
 
 export type investmentSimulation = typeof investmentSimulation.$inferSelect;
