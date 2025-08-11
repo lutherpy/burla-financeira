@@ -51,13 +51,17 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export const GET = getListHandler(investmentSimulation, {
-  name: investmentSimulation.name,
-  bank: investmentSimulation.bank,
-  accountNumber: investmentSimulation.accountNumber,
-  province: investmentSimulation.province,
-  age: investmentSimulation.age,
-  amount: investmentSimulation.amount,
-  createdAt: investmentSimulation.createdAt,
-  profissao: investmentSimulation.profissao,
-});
+export const GET = getListHandler(
+  investmentSimulation,
+  {
+    name: investmentSimulation.name,
+    bank: investmentSimulation.bank,
+    accountNumber: investmentSimulation.accountNumber,
+    province: investmentSimulation.province,
+    age: investmentSimulation.age,
+    amount: investmentSimulation.amount,
+    createdAt: investmentSimulation.createdAt,
+    profissao: investmentSimulation.profissao,
+  },
+  { key: "profissao", column: investmentSimulation.profissao }
+);

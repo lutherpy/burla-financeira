@@ -211,8 +211,7 @@ export default function InvestorDashboard() {
               columns={columns}
               titleColumn="name"
               titleLabel="Nome"
-              filterField="profissao" // campo no banco
-              filterLabel="Profissão" // rótulo no front
+              extraFilters={[{ key: "profissao", label: "Profissão" }]}
             />
           </div>
         </CardContent>

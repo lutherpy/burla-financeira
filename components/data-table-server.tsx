@@ -28,13 +28,19 @@ import { Button } from "@/components/ui/button";
 import Loading from "@/components/loading/loading";
 import { X } from "lucide-react";
 
+interface ExtraFilter<TData> {
+  key: keyof TData;
+  label: string;
+}
+
 interface DataTableServerProps<TData, TValue> {
   endpoint: string;
   columns: ColumnDef<TData, TValue>[];
   titleColumn: string;
   titleLabel: string;
-  filterField?: keyof TData; // campo que será usado para filtro dinâmico
-  filterLabel?: string; // rótulo exibido no filtro
+  filterField?: keyof TData;
+  filterLabel?: string;
+  extraFilters?: ExtraFilter<TData>[];
 }
 
 export function DataTableServer<TData extends Record<string, unknown>, TValue>({
@@ -43,20 +49,33 @@ export function DataTableServer<TData extends Record<string, unknown>, TValue>({
   titleColumn,
   titleLabel,
   filterField,
-  filterLabel,
+  extraFilters = [],
 }: DataTableServerProps<TData, TValue>) {
   const [inputSearch, setInputSearch] = useState("");
   const [search, setSearch] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState("all");
+  const [selectedFilter] = useState("all");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [orderBy, setOrderBy] = useState("createdAt");
   const [orderDir, setOrderDir] = useState<"asc" | "desc">("desc");
 
+  const [extraFilterValues, setExtraFilterValues] = useState<
+    Record<string, string>
+  >({});
+
+  const queryParams = new URLSearchParams({
+    page: String(page),
+    limit: String(limit),
+    search,
+    orderBy,
+    orderDir,
+    ...Object.fromEntries(
+      Object.entries(extraFilterValues).filter(([, v]) => v && v !== "all")
+    ),
+  });
+
   const { data, error, isLoading } = useSWR(
-    `${endpoint}?page=${page}&limit=${limit}&search=${encodeURIComponent(
-      search
-    )}&orderBy=${orderBy}&orderDir=${orderDir}`,
+    `${endpoint}?${queryParams.toString()}`,
     async (url: string) => {
       const res = await fetch(url);
       if (!res.ok) throw new Error("Erro ao buscar dados");
@@ -70,16 +89,6 @@ export function DataTableServer<TData extends Record<string, unknown>, TValue>({
     }
   );
 
-  // Lista única do campo dinâmico
-  const filterOptions = useMemo(() => {
-    if (!data?.data || !filterField) return [];
-    const list = Array.from(
-      new Set(data.data.map((item: TData) => item[filterField]).filter(Boolean))
-    ) as string[];
-    return list.sort();
-  }, [data, filterField]);
-
-  // Filtragem no front
   const filteredData = useMemo(() => {
     if (!filterField || selectedFilter === "all") return data?.data || [];
     return (data?.data || []).filter(
@@ -131,9 +140,7 @@ export function DataTableServer<TData extends Record<string, unknown>, TValue>({
 
   return (
     <div className="space-y-4">
-      {/* Filtros */}
       <div className="flex items-end gap-3 mt-4 flex-nowrap overflow-x-auto">
-        {/* Campo de busca */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -159,32 +166,46 @@ export function DataTableServer<TData extends Record<string, unknown>, TValue>({
           )}
         </form>
 
-        {/* Filtro dinâmico */}
-        {filterField && (
-          <div className="w-40">
-            <label className="text-xs font-medium block mb-1">
-              {filterLabel || String(filterField)}
-            </label>
-            <Select
-              value={selectedFilter}
-              onValueChange={(value) => setSelectedFilter(value)}
-            >
-              <SelectTrigger className="w-full h-9 text-sm">
-                <SelectValue placeholder="Todas" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todas</SelectItem>
-                {filterOptions.map((opt) => (
-                  <SelectItem key={opt} value={opt}>
-                    {opt}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
+        {extraFilters.map(({ key, label }) => {
+          const options = Array.from(
+            new Set(
+              ((data?.data as TData[]) || [])
+                .map((item: TData) => item[key] as TData[keyof TData])
+                .filter(Boolean)
+            )
+          ).sort();
 
-        {/* Ordenar por */}
+          return (
+            <div key={String(key)} className="w-40">
+              <label className="text-xs font-medium block mb-1">{label}</label>
+              <Select
+                value={extraFilterValues[String(key)] || "all"}
+                onValueChange={(value) => {
+                  setExtraFilterValues((prev) => ({
+                    ...prev,
+                    [String(key)]: value,
+                  }));
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger className="w-full h-9 text-sm">
+                  <SelectValue>
+                    {extraFilterValues[String(key)] || "Todos"}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
+                  {options.map((opt) => (
+                    <SelectItem key={String(opt)} value={String(opt)}>
+                      {String(opt)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          );
+        })}
+
         <div className="w-40">
           <label className="text-xs font-medium block mb-1">Ordenar por</label>
           <Select value={orderBy} onValueChange={setOrderBy}>
@@ -199,7 +220,6 @@ export function DataTableServer<TData extends Record<string, unknown>, TValue>({
           </Select>
         </div>
 
-        {/* Ordem */}
         <div className="w-28">
           <label className="text-xs font-medium block mb-1">Ordem</label>
           <Select
@@ -216,7 +236,6 @@ export function DataTableServer<TData extends Record<string, unknown>, TValue>({
           </Select>
         </div>
 
-        {/* Itens por página */}
         <div className="w-28">
           <label className="text-xs font-medium block mb-1">Itens</label>
           <Select
@@ -238,7 +257,6 @@ export function DataTableServer<TData extends Record<string, unknown>, TValue>({
           </Select>
         </div>
 
-        {/* Botão pesquisar */}
         <div className="flex items-end">
           <Button size="sm" onClick={handleSubmitSearch}>
             Pesquisar
@@ -246,7 +264,6 @@ export function DataTableServer<TData extends Record<string, unknown>, TValue>({
         </div>
       </div>
 
-      {/* Tabela */}
       <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
@@ -315,7 +332,6 @@ export function DataTableServer<TData extends Record<string, unknown>, TValue>({
         </Table>
       </div>
 
-      {/* Paginação */}
       <div className="flex items-center justify-end space-x-2 py-4">
         <Button
           variant="outline"
@@ -326,7 +342,7 @@ export function DataTableServer<TData extends Record<string, unknown>, TValue>({
           Anterior
         </Button>
         <span>
-          Página {page} de {totalPages} de {data?.total || 0} registos
+          Página {page} de {totalPages} de {data?.total || 0} registros
         </span>
         <Button
           variant="outline"
