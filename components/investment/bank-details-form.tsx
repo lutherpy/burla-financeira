@@ -48,8 +48,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { provincias } from "@/data/provincias";
-import { profissoes } from "@/data/profissoes"; // ajuste o caminho conforme necessário
-
+import { profissoes } from "@/data/profissoes";
 import { SuccessModal } from "./sucess-modal";
 import { IconMoneybagPlus } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
@@ -68,12 +67,10 @@ type BankDetailsFormData = z.infer<typeof bankDetailsSchema>;
 
 export default function BankDetailsWizard() {
   const [isLoading, setIsLoading] = useState(false);
-
-  //const [paymentReference, setPaymentReference] = useState<string | null>(null);
-  const [currentStep, setCurrentStep] = useState(0); // 0 for Personal, 1 for Investment
-
+  const [currentStep, setCurrentStep] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isProfissaoOpen, setIsProfissaoOpen] = useState(false);
+  const [isOutra, setIsOutra] = useState(false); // ✅ controle da opção "Outra"
 
   const form = useForm<BankDetailsFormData>({
     resolver: zodResolver(bankDetailsSchema),
@@ -93,7 +90,7 @@ export default function BankDetailsWizard() {
     if (currentStep === 0) {
       isValid = await form.trigger(["name", "age", "profissao", "province"]);
     } else if (currentStep === 1) {
-      isValid = await form.trigger(["bank", "accountNumber", "amount"]); // <-- aqui
+      isValid = await form.trigger(["bank", "accountNumber", "amount"]);
     }
 
     if (isValid) {
@@ -118,19 +115,18 @@ export default function BankDetailsWizard() {
     try {
       const response = await fetch("/api/investment", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
 
       if (!response.ok) {
         throw new Error("Erro ao salvar no servidor");
       }
-      form.reset();
-      toast.success("Dados enviados com sucesso!");
 
-      setIsModalOpen(true); // ⬅️ abre o modal
+      form.reset();
+      setIsOutra(false);
+      toast.success("Dados enviados com sucesso!");
+      setIsModalOpen(true);
     } catch (err) {
       console.error(err);
       toast.error("Erro ao enviar os dados bancários");
@@ -138,22 +134,6 @@ export default function BankDetailsWizard() {
       setIsLoading(false);
     }
   };
-
-  // const generatePaymentReference = () => {
-  //   const ref = `REF-${Math.random()
-  //     .toString(36)
-  //     .substring(2, 10)
-  //     .toUpperCase()}-${Date.now().toString().slice(-4)}`;
-  //   setPaymentReference(ref);
-  //   toast.success("Referência gerada com sucesso");
-  // };
-
-  // const copyToClipboard = () => {
-  //   if (paymentReference) {
-  //     navigator.clipboard.writeText(paymentReference);
-  //     toast.success("Referência copiada para a área de transferência");
-  //   }
-  // };
 
   return (
     <Card className="w-full max-w-md">
@@ -184,6 +164,7 @@ export default function BankDetailsWizard() {
             >
               <TabsContent value="personal">
                 <div className="grid gap-4">
+                  {/* Nome */}
                   <FormField
                     control={form.control}
                     name="name"
@@ -197,6 +178,7 @@ export default function BankDetailsWizard() {
                       </FormItem>
                     )}
                   />
+                  {/* Idade */}
                   <FormField
                     control={form.control}
                     name="age"
@@ -214,7 +196,7 @@ export default function BankDetailsWizard() {
                       </FormItem>
                     )}
                   />
-
+                  {/* Província */}
                   <FormField
                     control={form.control}
                     name="province"
@@ -242,6 +224,7 @@ export default function BankDetailsWizard() {
                       </FormItem>
                     )}
                   />
+                  {/* Profissão */}
                   <FormField
                     control={form.control}
                     name="profissao"
@@ -261,7 +244,10 @@ export default function BankDetailsWizard() {
                                 aria-controls="profissoes-list"
                                 className="w-full justify-between border rounded-md px-3 py-2 text-sm"
                               >
-                                {field.value || "Seleccione a sua profissão"}
+                                {field.value ||
+                                  (isOutra
+                                    ? "Outra"
+                                    : "Seleccione a sua profissão")}
                               </button>
                             </PopoverTrigger>
                             <PopoverContent className="w-full p-0">
@@ -276,6 +262,7 @@ export default function BankDetailsWizard() {
                                       <CommandItem
                                         key={profissao}
                                         onSelect={() => {
+                                          setIsOutra(false);
                                           field.onChange(profissao);
                                           setIsProfissaoOpen(false);
                                         }}
@@ -291,6 +278,23 @@ export default function BankDetailsWizard() {
                                         {profissao}
                                       </CommandItem>
                                     ))}
+                                    {/* Opção "Outra" */}
+                                    <CommandItem
+                                      key="Outra"
+                                      onSelect={() => {
+                                        setIsOutra(true);
+                                        field.onChange(""); // deixa em branco para digitar
+                                        setIsProfissaoOpen(false);
+                                      }}
+                                    >
+                                      <Check
+                                        className={cn(
+                                          "h-4 w-4",
+                                          isOutra ? "opacity-100" : "opacity-0"
+                                        )}
+                                      />
+                                      Outra
+                                    </CommandItem>
                                   </CommandGroup>
                                 </CommandList>
                               </Command>
@@ -298,11 +302,22 @@ export default function BankDetailsWizard() {
                           </Popover>
                         </FormControl>
                         <FormMessage />
+
+                        {isOutra && (
+                          <div className="mt-2">
+                            <Input
+                              placeholder="Digite a sua profissão"
+                              value={field.value}
+                              onChange={(e) => field.onChange(e.target.value)}
+                            />
+                          </div>
+                        )}
                       </FormItem>
                     )}
                   />
                 </div>
               </TabsContent>
+              {/* Aba Investimento */}
               <TabsContent value="investment">
                 <div className="grid gap-4">
                   <FormField
@@ -331,7 +346,6 @@ export default function BankDetailsWizard() {
                       </FormItem>
                     )}
                   />
-
                   <FormField
                     control={form.control}
                     name="amount"
@@ -349,47 +363,9 @@ export default function BankDetailsWizard() {
                       </FormItem>
                     )}
                   />
-                  {/* <FormItem>
-                    <FormLabel></FormLabel>
-                    <div className="flex gap-2">
-                      <Input
-                        readOnly
-                        value={paymentReference || "Clique em Gerar Referência"}
-                        className="flex-1"
-                      />
-                      <Button
-                        className="bg-green-600 hover:bg-green-700"
-                        type="button"
-                        onClick={generatePaymentReference}
-                        disabled={!!paymentReference}
-                      >
-                        Gerar Referência
-                      </Button>
-                    </div> */}
-                  {/* {paymentReference && (
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-                        <span>
-                          Sua referência:{" "}
-                          <span className="font-semibold text-foreground">
-                            {paymentReference}
-                          </span>
-                        </span>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={copyToClipboard}
-                          className="h-7 w-7"
-                          aria-label="Copiar referência"
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    )} 
-                  </FormItem>*/}
                 </div>
               </TabsContent>
-
+              {/* Botões */}
               <div className="flex flex-col md:flex-row items-center justify-center gap-4 mt-6">
                 {currentStep > 0 && (
                   <Button
@@ -401,7 +377,6 @@ export default function BankDetailsWizard() {
                     Voltar
                   </Button>
                 )}
-
                 <Button
                   type="button"
                   onClick={handleNextStep}
