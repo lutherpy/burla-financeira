@@ -57,9 +57,11 @@ export default function InvestmentPrompt() {
           </p>
           <p>
             Com um depósito de AKZ50.000, poderás ganhar um retorno de mais de
-            AKZ250.000! <p>Clique no botão abaixo se estiveres interessado!</p>
+            AKZ250.000!
           </p>
+          <p>Clique no botão abaixo se estiveres interessado!</p>
         </CardContent>
+
         <CardFooter className="flex justify-center">
           <Button className="w-full" onClick={handleClick} disabled={loading}>
             {loading ? (

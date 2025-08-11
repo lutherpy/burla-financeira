@@ -25,20 +25,9 @@ export default function InvestmentGains() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 w-full max-w-4xl mx-auto">
-      {/* Imagem fixa */}
-      <Card className="flex-1 overflow-hidden">
-        <img
-          src="/investment.png"
-          alt="Ganhos potenciais"
-          className="w-full h-full object-cover"
-        />
-      </Card>
-
-      {/* Conteúdo com as duas mensagens */}
-      <Card className="flex-1 flex flex-col">
+    <div className="w-full max-w-lg md:max-w-2xl mx-auto p-4">
+      <Card className="flex flex-col">
         <CardHeader className="text-center">
-          {/* Ícone de positividade */}
           <CheckCircle className="mx-auto text-green-500" size={72} />
           <CardTitle className="text-2xl mt-4">Parabéns!</CardTitle>
           <CardDescription>
@@ -47,14 +36,14 @@ export default function InvestmentGains() {
         </CardHeader>
 
         <CardContent className="text-center space-y-4">
-          {/* Mensagem de agradecimento */}
-          <div>
-            <p>Obrigado pela confiança depositada.</p>
-            <p>Está prestes a entrar numa fase exclusiva e promissora.</p>
-          </div>
+          <section>
+            <p>
+              Obrigado pela confiança depositada. Está prestes a entrar numa
+              fase exclusiva e promissora.
+            </p>
+          </section>
 
-          {/* Mensagem de aprofundamento sobre os ganhos */}
-          <div>
+          <section>
             <p>
               Nas próximas semanas, investidores com o seu perfil estarão a ver
               retornos de até <strong>300%</strong> em apenas 30 dias.
@@ -63,7 +52,7 @@ export default function InvestmentGains() {
               Clique no botão abaixo para configurar o seu perfil e começar a
               receber os seus ganhos.
             </p>
-          </div>
+          </section>
         </CardContent>
 
         <CardFooter className="flex justify-center mt-auto">
