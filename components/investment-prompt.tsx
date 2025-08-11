@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,17 +12,23 @@ import {
 } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 
+import InvestmentGains from "./investment-gains";
+
 export default function InvestmentPrompt() {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
   const [loading, setLoading] = useState(false);
+  const [showHello, setShowHello] = useState(false);
 
   const handleClick = () => {
     setLoading(true);
-    startTransition(() => {
-      router.push("/investir");
-    });
+    setTimeout(() => {
+      setShowHello(true);
+      setLoading(false);
+    }, 800); // pequeno delay para simular carregamento
   };
+
+  if (showHello) {
+    return <InvestmentGains />;
+  }
 
   return (
     <div className="flex flex-col md:flex-row gap-6 w-full max-w-4xl mx-auto">
@@ -51,18 +56,13 @@ export default function InvestmentPrompt() {
             investidores têm essa informação!
           </p>
           <p>
-            Com um depósito de AKZ50.000, tu entras na nossa sala privada de
-            investimentos e recebes as recomendações em primeira mão. Aproveite
-            antes que feche! Clique no botão abaixo se estiveres interessado!
+            Com um depósito de AKZ50.000, poderás ganhar um retorno de mais de
+            AKZ250.000! <p>Clique no botão abaixo se estiveres interessado!</p>
           </p>
         </CardContent>
         <CardFooter className="flex justify-center">
-          <Button
-            className="w-full"
-            onClick={handleClick}
-            disabled={loading || isPending}
-          >
-            {loading || isPending ? (
+          <Button className="w-full" onClick={handleClick} disabled={loading}>
+            {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Carregando...
