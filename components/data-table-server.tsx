@@ -258,9 +258,7 @@ export function DataTableServer<TData extends Record<string, unknown>, TValue>({
         </div>
 
         <div className="flex items-end">
-          <Button size="sm" onClick={handleSubmitSearch}>
-            Pesquisar
-          </Button>
+          <Button onClick={handleSubmitSearch}>Pesquisar</Button>
         </div>
       </div>
 
